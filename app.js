@@ -8,6 +8,13 @@ var DocumentDBClient = require('documentdb').DocumentClient;
 var config = require('./config');
 var TaskList = require('./routes/tasklist');
 var TaskDao = require('./models/taskDao');
+var appInsights = null;
+
+if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+  appInsights = require('applicationinsights');
+  appInsights.setup().start();
+  console.log('Application Insights active.');
+}
 
 var app = express();
 
@@ -30,6 +37,9 @@ var taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
 var taskList = new TaskList(taskDao);
 taskDao.init(function (err) {
   console.log(err);
+  if (appInsights) {
+    appInsights.getClient().trackEvent(err);
+  }
 });
 
 app.get('/', taskList.showTasks.bind(taskList));
@@ -61,6 +71,9 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
+  if (appInsights) {
+    appInsights.getClient().trackEvent(err);
+  }
   res.render('error', {
     message: err.message,
     error: {}
