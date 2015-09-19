@@ -1,3 +1,4 @@
+require('dotenv').load();
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,13 +9,10 @@ var DocumentDBClient = require('documentdb').DocumentClient;
 var config = require('./config');
 var TaskList = require('./routes/tasklist');
 var TaskDao = require('./models/taskDao');
-var appInsights = null;
+var appInsights = require('applicationinsights');
 
-if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-  appInsights = require('applicationinsights');
-  appInsights.setup().start();
-  console.log('Application Insights active.');
-}
+appInsights.setup().start();
+console.log('Application Insights active.');
 
 var app = express();
 
@@ -37,9 +35,7 @@ var taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
 var taskList = new TaskList(taskDao);
 taskDao.init(function (err) {
   console.log(err);
-  if (appInsights) {
-    appInsights.getClient().trackEvent(err);
-  }
+  appInsights.client.trackException(err);
 });
 
 app.get('/', taskList.showTasks.bind(taskList));
@@ -72,13 +68,15 @@ if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   if (appInsights) {
-    appInsights.getClient().trackEvent(err);
+    appInsights.client.trackException(err);
   }
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
+
+appInsights.client.trackEvent("Server started");
 
 
 module.exports = app;
