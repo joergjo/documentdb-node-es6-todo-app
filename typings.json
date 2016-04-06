@@ -1,0 +1,13 @@
+{
+  "name": "TodoJS",
+  "version": false,
+  "ambientDependencies": {
+    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "async": "github:DefinitelyTyped/DefinitelyTyped/async/async.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "documentdb": "github:DefinitelyTyped/DefinitelyTyped/documentdb/documentdb.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "applicationinsights": "github:DefinitelyTyped/DefinitelyTyped/applicationinsights/applicationinsights.d.ts#7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+  }
+}

@@ -78,5 +78,4 @@ app.use(function (err, req, res, next) {
 
 appInsights.client.trackEvent("Server started");
 
-
 module.exports = app;
