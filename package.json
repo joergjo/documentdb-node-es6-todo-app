@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "typings": "typings",
+    "postinstall": "typings install"
   },
   "engines": {
     "node": "~4.4.0"
@@ -20,5 +22,8 @@
     "jade": "~1.9.2",
     "morgan": "~1.5.3",
     "serve-favicon": "~2.2.1"
+  },
+  "devDependencies": {
+    "typings": "^0.7.12"
   }
 }
