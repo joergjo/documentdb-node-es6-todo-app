@@ -1,9 +1,7 @@
 'use strict';
 
-var DocumentDBClient = require('documentdb').DocumentClient;
-
-var DocDBUtils = {
-	getOrCreateDatabase: function (client, databaseId, callback) {
+class DocDBUtils {
+	static getOrCreateDatabase(client, databaseId, callback) { 
 		let querySpec = {
 			query: 'SELECT * from root r WHERE r.id=@id',
 			parameters: [{
@@ -12,7 +10,7 @@ var DocDBUtils = {
 			}]
 		};
 
-		client.queryDatabases(querySpec).toArray(function (err, results) {
+		client.queryDatabases(querySpec).toArray((err, results) => {
 			if (err) {
 				callback(err);
 			} else {
@@ -21,7 +19,7 @@ var DocDBUtils = {
 						id: databaseId
 					};
 
-					client.createDatabase(databaseSpec, function (err, created) {
+					client.createDatabase(databaseSpec, (err, created) => {
 						callback(null, created);
 					});
 				} else {
@@ -29,10 +27,10 @@ var DocDBUtils = {
 				}
 			}
 		});
-	},
+	}
 
-	getOrCreateCollection: function (client, databaseLink, collectionId, callback) {
-		let querySpec = {
+	static getOrCreateCollection(client, databaseLink, collectionId, callback) { 
+			let querySpec = {
 			query: 'SELECT * from root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
@@ -40,7 +38,7 @@ var DocDBUtils = {
 			}]
 		};
 
-		client.queryCollections(databaseLink, querySpec).toArray(function (err, results) {
+		client.queryCollections(databaseLink, querySpec).toArray((err, results) => {
 			if (err) {
 				callback(err);
 			} else {
@@ -53,7 +51,7 @@ var DocDBUtils = {
 						offerType: 'S1'
 					};
 
-					client.createCollection(databaseLink, collectionSpec, requestOptions, function (err, created) {
+					client.createCollection(databaseLink, collectionSpec, requestOptions, (err, created) => {
 						callback(null, created);
 					});
 				} else {
@@ -62,6 +60,6 @@ var DocDBUtils = {
 			}
 		});
 	}
-};
+}
 
 module.exports = DocDBUtils;

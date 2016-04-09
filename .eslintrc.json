@@ -1,0 +1,25 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-console": 0,
+    "no-unused-vars": [
+      2,
+      {
+        "args": "none"
+      }
+    ],
+    "no-var": 2,
+    "indent": 0,
+    "linebreak-style": 0,
+    "prefer-arrow-callback": 2,
+    "prefer-const": 1,
+    "semi": [
+      2,
+      "always"
+    ]
+  }
+}

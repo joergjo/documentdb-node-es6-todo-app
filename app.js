@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 require('dotenv').load();
 const express = require('express');
@@ -22,8 +22,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,11 +32,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 const docDBClient = new DocumentDBClient(config.host, {
   masterKey: config.authKey
 });
+
 const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
 taskDao.init((err) => {
   console.log(err);
   appInsights.client.trackException(err);
 });
+
 const taskList = new TaskList(taskDao);
 
 app.get('/', (req, res) => taskList.showTasks(req, res));

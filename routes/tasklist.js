@@ -1,6 +1,5 @@
 'use strict';
 
-const DocumentDBClient = require('documentdb').DocumentClient;
 const async = require('async');
 
 class TaskList {
