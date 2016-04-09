@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "typings": "typings",
-    "postinstall": "typings install"
+    "typings": "typings"
   },
   "engines": {
     "node": "~4.4.0"
