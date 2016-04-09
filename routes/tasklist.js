@@ -1,17 +1,15 @@
-var DocumentDBClient = require('documentdb').DocumentClient;
-var async = require('async');
+'use strict';
 
-function TaskList(taskDao) {
-  this.taskDao = taskDao;
-}
+const DocumentDBClient = require('documentdb').DocumentClient;
+const async = require('async');
 
-module.exports = TaskList;
+class TaskList {
+  constructor(taskDao) {
+    this.taskDao = taskDao;
+  }
 
-TaskList.prototype = {
-  showTasks: function (req, res) {
-    var self = this;
-
-    var querySpec = {
+  showTasks(req, res) {
+    let querySpec = {
       query: 'SELECT * FROM root r WHERE r.completed=@completed',
       parameters: [{
         name: '@completed',
@@ -19,44 +17,42 @@ TaskList.prototype = {
       }]
     };
 
-    self.taskDao.find(querySpec, function (err, items) {
+    this.taskDao.find(querySpec, (err, items) => {
       if (err) {
         throw (err);
       }
 
       res.render('index', {
-        title: 'My ToDo List ',
+        title: 'My ToDo List',
         tasks: items
       });
     });
-  },
+  }
 
-  addTask: function (req, res) {
-    var self = this;
-    var item = req.body;
+  addTask(req, res) {
+    let item = req.body;
 
-    self.taskDao.addItem(item, function (err) {
+    this.taskDao.addItem(item, (err) => {
       if (err) {
         throw (err);
       }
-
+      
       res.redirect('/');
     });
-  },
+  }
+  
+  completeTask(req, res) {
+    let completedTasks = Object.keys(req.body);
 
-  completeTask: function (req, res) {
-    var self = this;
-    var completedTasks = Object.keys(req.body);
-
-    async.forEach(completedTasks, function taskIterator(completedTask, callback) {
-      self.taskDao.updateItem(completedTask, function (err) {
+    async.forEach(completedTasks, (completedTask, callback) => {
+      this.taskDao.updateItem(completedTask, (err) => {
         if (err) {
           callback(err);
         } else {
           callback(null);
         }
       });
-    }, function goHome(err) {
+    }, (err) => {
       if (err) {
         throw err;
       } else {
@@ -64,4 +60,6 @@ TaskList.prototype = {
       }
     });
   }
-};
+}
+
+module.exports = TaskList;

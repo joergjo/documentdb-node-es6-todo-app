@@ -1,20 +1,22 @@
+'use strict'
+
 require('dotenv').load();
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var DocumentDBClient = require('documentdb').DocumentClient;
-var config = require('./config');
-var TaskList = require('./routes/tasklist');
-var TaskDao = require('./models/taskDao');
-var appInsights = require('applicationinsights');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const DocumentDBClient = require('documentdb').DocumentClient;
+const config = require('./config');
+const TaskList = require('./routes/tasklist');
+const TaskDao = require('./models/taskDao');
+const appInsights = require('applicationinsights');
 
 appInsights.setup().start();
 console.log('Application Insights active.');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,23 +30,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var docDBClient = new DocumentDBClient(config.host, {
+const docDBClient = new DocumentDBClient(config.host, {
   masterKey: config.authKey
 });
-var taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
-var taskList = new TaskList(taskDao);
-taskDao.init(function (err) {
+const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
+taskDao.init((err) => {
   console.log(err);
   appInsights.client.trackException(err);
 });
+const taskList = new TaskList(taskDao);
 
-app.get('/', taskList.showTasks.bind(taskList));
-app.post('/addtask', taskList.addTask.bind(taskList));
-app.post('/completetask', taskList.completeTask.bind(taskList));
+app.get('/', (req, res) => taskList.showTasks(req, res));
+app.post('/addtask', (req, res) => taskList.addTask(req, res));
+app.post('/completetask', (req, res) => taskList.completeTask(req, res));
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  var err = new Error('Not Found');
+app.use((req, res, next) => {
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
@@ -54,7 +56,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function (err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -65,7 +67,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
   if (appInsights) {
     appInsights.client.trackException(err);
@@ -76,6 +78,6 @@ app.use(function (err, req, res, next) {
   });
 });
 
-appInsights.client.trackEvent("Server started");
+appInsights.client.trackEvent('Server started');
 
 module.exports = app;

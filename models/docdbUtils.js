@@ -1,8 +1,10 @@
+'use strict';
+
 var DocumentDBClient = require('documentdb').DocumentClient;
 
 var DocDBUtils = {
 	getOrCreateDatabase: function (client, databaseId, callback) {
-		var querySpec = {
+		let querySpec = {
 			query: 'SELECT * from root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
@@ -15,7 +17,7 @@ var DocDBUtils = {
 				callback(err);
 			} else {
 				if (results.length === 0) {
-					var databaseSpec = {
+					let databaseSpec = {
 						id: databaseId
 					};
 
@@ -30,7 +32,7 @@ var DocDBUtils = {
 	},
 
 	getOrCreateCollection: function (client, databaseLink, collectionId, callback) {
-		var querySpec = {
+		let querySpec = {
 			query: 'SELECT * from root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
@@ -43,11 +45,11 @@ var DocDBUtils = {
 				callback(err);
 			} else {
 				if (results.length === 0) {
-					var collectionSpec = {
+					let collectionSpec = {
 						id: collectionId
 					};
 
-					var requestOptions = {
+					let requestOptions = {
 						offerType: 'S1'
 					};
 
