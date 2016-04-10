@@ -35,11 +35,11 @@ class TaskList {
       if (err) {
         throw (err);
       }
-      
+
       res.redirect('/');
     });
   }
-  
+
   completeTask(req, res) {
     let completedTasks = Object.keys(req.body);
 
@@ -54,9 +54,9 @@ class TaskList {
     }, (err) => {
       if (err) {
         throw err;
-      } else {
-        res.redirect('/');
       }
+
+      res.redirect('/');
     });
   }
 }
