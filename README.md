@@ -5,5 +5,5 @@ In order to run the sample locally, create a text file called `.env` in the proj
 
 Note that `.env` is included in the project's `.gitignore` and thus will _not_ be commited to your git repo in order to protect your DocumentDB and Application Insights keys.
 ***
-The project also contains a basic Dockerfile to get you started to build a containerized version of this app. Just follow [these instructions](https://hub.docker.com/_/node/), and don't forget to supply HOST, APP_KEY, and APPINSIGHTS_INSTRUMENTATIONKEY as environment. You can reuse the aforementioned `.env` file for this purpose by adding `--env-file .env` as parameter to `docker run`, e.g. `docker run -d -p 3000:3000 --env .env
+The project also contains a basic Dockerfile to get you started to build a containerized version of this app. Just follow [these instructions](https://hub.docker.com/_/node/), and don't forget to supply HOST, APP_KEY, and APPINSIGHTS_INSTRUMENTATIONKEY as environment. You can reuse the aforementioned `.env` file for this purpose by adding `--env-file .env` as parameter to `docker run`, e.g. `docker run -d -p 3000:3000 --env-file .env
 --name "todo-app" <image-name>` (replace the host port or container name as desired). 
