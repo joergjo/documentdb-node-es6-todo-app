@@ -8,7 +8,7 @@ class TaskList {
   }
 
   showTasks(req, res) {
-    let querySpec = {
+    const querySpec = {
       query: 'SELECT * FROM root r WHERE r.completed=@completed',
       parameters: [{
         name: '@completed',
@@ -29,7 +29,7 @@ class TaskList {
   }
 
   addTask(req, res) {
-    let item = req.body;
+    const item = req.body;
 
     this.taskDao.addItem(item, (err) => {
       if (err) {
@@ -41,7 +41,7 @@ class TaskList {
   }
 
   completeTask(req, res) {
-    let completedTasks = Object.keys(req.body);
+    const completedTasks = Object.keys(req.body);
 
     async.forEach(completedTasks, (completedTask, callback) => {
       this.taskDao.updateItem(completedTask, (err) => {
