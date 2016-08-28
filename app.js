@@ -7,7 +7,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const DocumentDBClient = require('documentdb').DocumentClient;
+const DocumentDBClient = require('documentdb-q-promises').DocumentClientWrapper;
 const config = require('./config');
 const TaskList = require('./routes/tasklist');
 const TaskDao = require('./models/taskDao');
@@ -34,9 +34,16 @@ const docDBClient = new DocumentDBClient(config.host, {
 });
 
 const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
-taskDao.init((err) => {
+
+taskDao.init().done(result => {
+  const message = `Initialized app for DocumentDB ${config.databaseId} and ${config.collectionId}`; 
+  console.log(message);
+  appInsights.client.trackEvent(message);
+}, err => {
+  // Failed to initialize TaskDao due to DocumentDB issues (either configuration or runtime).
+  // Abort the app.
   console.log(err);
-  appInsights.client.trackException(err);
+  throw new Error("Failed to initialize application. Please check your DocumentDB configuration and account.");
 });
 
 const taskList = new TaskList(taskDao);
@@ -79,6 +86,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-appInsights.client.trackEvent('Server started');
+const message = `Server started at ${new Date().toUTCString()}.`; 
+console.log(message);
+appInsights.client.trackEvent(message);
 
 module.exports = app;

@@ -1,6 +1,6 @@
 'use strict';
 
-const async = require('async');
+const Q = require('q');
 
 class TaskList {
   constructor(taskDao) {
@@ -16,47 +16,38 @@ class TaskList {
       }]
     };
 
-    this.taskDao.find(querySpec, (err, items) => {
-      if (err) {
-        throw (err);
-      }
-
+    this.taskDao.find(querySpec).done(items => {
       res.render('index', {
         title: 'My ToDo List',
-        tasks: items
+        tasks: items.feed
       });
+    }, err => {
+      throw (err);
     });
   }
 
   addTask(req, res) {
     const item = req.body;
 
-    this.taskDao.addItem(item, (err) => {
-      if (err) {
-        throw (err);
-      }
-
+    this.taskDao.addItem(item).done(item => {
       res.redirect('/');
+    }, err => {
+      throw (err);
     });
   }
 
   completeTask(req, res) {
     const completedTasks = Object.keys(req.body);
+    const updateCalls = [];
 
-    async.forEach(completedTasks, (completedTask, callback) => {
-      this.taskDao.updateItem(completedTask, (err) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null);
-        }
-      });
-    }, (err) => {
-      if (err) {
-        throw err;
-      }
+    completedTasks.forEach(taskId => {
+      updateCalls.push(this.taskDao.updateItem(taskId));
+    });
 
+    Q.all(updateCalls).done(results => {
       res.redirect('/');
+    }, err => {
+      throw err;
     });
   }
 }

@@ -1,63 +1,64 @@
 'use strict';
 
 class DocDBUtils {
-	static getOrCreateDatabase(client, databaseId, callback) { 
-		let querySpec = {
-			query: 'SELECT * from root r WHERE r.id=@id',
+
+	static getOrCreateDatabase(client, databaseId) {
+		const querySpec = {
+			query: 'SELECT * FROM root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
 				value: databaseId
 			}]
 		};
 
-		client.queryDatabases(querySpec).toArray((err, results) => {
-			if (err) {
-				callback(err);
-			} else {
-				if (results.length === 0) {
-					let databaseSpec = {
-						id: databaseId
-					};
+		return client.queryDatabases(querySpec).toArrayAsync().then(results => {
+			if (results.length === 0) {
+				const databaseSpec = {
+					id: databaseId
+				};
 
-					client.createDatabase(databaseSpec, (err, created) => {
-						callback(null, created);
+				client.createDatabaseAsync(databaseSpec)
+					.then(databaseResponse => {
+						const database = databaseResponse.resource;
+						return database;
 					});
-				} else {
-					callback(null, results[0]);
-				}
 			}
+			return results.feed[0];
+		}).fail(error => {
+			console.log(`Error creating database ${databaseId}: ${error}`);
+			throw error;
 		});
 	}
 
-	static getOrCreateCollection(client, databaseLink, collectionId, callback) { 
-			let querySpec = {
-			query: 'SELECT * from root r WHERE r.id=@id',
+	static getOrCreateCollection(client, databaseLink, collectionId) {
+		const querySpec = {
+			query: 'SELECT * FROM root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
 				value: collectionId
 			}]
 		};
 
-		client.queryCollections(databaseLink, querySpec).toArray((err, results) => {
-			if (err) {
-				callback(err);
+		return client.queryCollections(databaseLink, querySpec).toArrayAsync().then(results => {
+			if (results.length === 0) {
+				const collectionSpec = {
+					id: collectionId
+				};
+
+				const requestOptions = {
+					offerType: 'S1'
+				};
+
+				client.createCollectionAsync(databaseLink, collectionSpec, requestOptions).then(collectionResponse => {
+					const collection = collectionResponse.resource;
+					return collection;
+				});
 			} else {
-				if (results.length === 0) {
-					let collectionSpec = {
-						id: collectionId
-					};
-
-					let requestOptions = {
-						offerType: 'S1'
-					};
-
-					client.createCollection(databaseLink, collectionSpec, requestOptions, (err, created) => {
-						callback(null, created);
-					});
-				} else {
-					callback(null, results[0]);
-				}
+				return results.feed[0];
 			}
+		}).fail(error => {
+			console.log(`Error creating collection ${collectionId}: ${error}`);
+			throw error;
 		});
 	}
 }

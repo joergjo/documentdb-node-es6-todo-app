@@ -12,65 +12,33 @@ class TaskDao {
 		this.collection = null;
 	}
 
-	init(callback) {
-		docdbUtils.getOrCreateDatabase(this.client, this.databaseId, (err, db) => {
-			if (err) {
-				callback(err);
-			} else {
-				this.database = db;
-				docdbUtils.getOrCreateCollection(this.client, this.database._self, this.collectionId, (err, coll) => {
-					if (err) {
-						callback(err);
-					} else {
-						this.collection = coll;
-					}
-				});
-			}
+	init() {
+		return docdbUtils.getOrCreateDatabase(this.client, this.databaseId).then(db => {
+			this.database = db;
+			return docdbUtils.getOrCreateCollection(this.client, this.database._self, this.collectionId).then(coll => this.collection = coll);
 		});
 	}
 
-  find(querySpec, callback) {
-		this.client.queryDocuments(this.collection._self, querySpec).toArray((err, results) => {
-			if (err) {
-				callback(err);
-			} else {
-				callback(null, results);
-			}
-		});
+  find(querySpec) {
+		return this.client.queryDocuments(this.collection._self, querySpec).toArrayAsync();
 	}
 
-	addItem(item, callback) {
+	addItem(item) {
 		item.date = Date.now();
 		item.completed = false;
+		return this.client.createDocumentAsync(this.collection._self, item);
+	}
 
-		this.client.createDocument(this.collection._self, item, (err, doc) => {
-			if (err) {
-				callback(err);
-			} else {
-				callback(null, doc);
-			}
+	updateItem(itemId) {
+		return this.getItem(itemId).then(items => {
+			const item = items.feed[0];
+			item.completed = true;
+			return this.client.upsertDocumentAsync(this.collection._self, item);
 		});
 	}
 
-	updateItem(itemId, callback) {
-		this.getItem(itemId, (err, doc) => {
-			if (err) {
-				callback(err);
-			} else {
-				doc.completed = true;
-				this.client.replaceDocument(doc._self, doc, (err, replaced) => {
-					if (err) {
-						callback(err);
-					} else {
-						callback(null, replaced);
-					}
-				});
-			}
-		});
-	}
-	
-	getItem(itemId, callback) {
-		let querySpec = {
+	getItem(itemId) {
+		const querySpec = {
 			query: 'SELECT * FROM root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
@@ -78,13 +46,7 @@ class TaskDao {
 			}]
 		};
 
-		this.client.queryDocuments(this.collection._self, querySpec).toArray((err, results) => {
-			if (err) {
-				callback(err);
-			} else {
-				callback(null, results[0]);
-			}
-		});
+		return this.find(querySpec);
 	}
 }
 
