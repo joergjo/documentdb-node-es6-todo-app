@@ -36,7 +36,7 @@ const docDBClient = new DocumentDBClient(config.host, {
 const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
 
 taskDao.init().done(result => {
-  const message = `Initialized app for DocumentDB ${config.databaseId} and ${config.collectionId}`; 
+  const message = `Initialized app for DocumentDB ${config.databaseId} and ${config.collectionId}`;
   console.log(message);
   appInsights.client.trackEvent(message);
 }, err => {
@@ -77,16 +77,14 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  if (appInsights) {
-    appInsights.client.trackException(err);
-  }
+  appInsights.client.trackException(err);
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
 
-const message = `Server started at ${new Date().toUTCString()}.`; 
+const message = `Server started at ${new Date().toUTCString()}.`;
 console.log(message);
 appInsights.client.trackEvent(message);
 
