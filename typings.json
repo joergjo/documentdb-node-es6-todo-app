@@ -8,7 +8,7 @@
     "serve-static": "registry:npm/serve-static#1.11.1+20160810053450"
   },
   "globalDependencies": {
-    "applicationinsights": "registry:dt/applicationinsights#0.15.12+20160323212307",
-    "node": "registry:dt/node#6.0.0+20160925070332"
+    "applicationinsights": "registry:dt/applicationinsights#0.15.12+20160928124223",
+    "node": "registry:dt/node#6.0.0+20161110151007"
   }
 }

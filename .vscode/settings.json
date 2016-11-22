@@ -4,5 +4,6 @@
 	"editor.tabSize": 2,
 	"editor.insertSpaces": true,
 	"editor.formatOnType": true,
-	"jshint.enable": false
+  "jshint.enable": false,
+  "typescript.check.workspaceVersion": false
 }
