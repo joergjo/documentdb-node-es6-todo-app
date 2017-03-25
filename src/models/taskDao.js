@@ -3,10 +3,11 @@
 const docdbUtils = require('./docdbUtils');
 
 class TaskDao {
-	constructor(documentDBClient, databaseId, collectionId) {
+	constructor(documentDBClient, databaseId, collectionId, appInsightsClient) {
 		this.client = documentDBClient;
 		this.databaseId = databaseId;
 		this.collectionId = collectionId;
+		this.appInsightsClient = appInsightsClient;
 
 		this.database = null;
 		this.collection = null;
@@ -23,30 +24,37 @@ class TaskDao {
 		return this.client.queryDocuments(this.collection._self, querySpec).toArrayAsync();
 	}
 
-	addItem(item) {
-		item.date = Date.now();
-		item.completed = false;
-		return this.client.createDocumentAsync(this.collection._self, item);
+	addItem(task) {
+		task.date = Date.now();
+		task.completed = false;
+		this.trackTask('Adding', task);
+		return this.client.createDocumentAsync(this.collection._self, task);
 	}
 
-	updateItem(itemId) {
-		return this.getItem(itemId).then(items => {
+	updateItem(taskId) {
+		return this.getItem(taskId).then(items => {
 			const item = items.feed[0];
 			item.completed = true;
+			this.trackTask('Completing', item);
 			return this.client.upsertDocumentAsync(this.collection._self, item);
 		});
 	}
 
-	getItem(itemId) {
+	getItem(taskId) {
 		const querySpec = {
 			query: 'SELECT * FROM root r WHERE r.id=@id',
 			parameters: [{
 				name: '@id',
-				value: itemId
+				value: taskId
 			}]
 		};
 
 		return this.find(querySpec);
+	}
+
+	trackTask(action, task) {
+		const message = `${action} task ${task.name}.`;
+		this.appInsightsClient.trackEvent(message);
 	}
 }
 

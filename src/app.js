@@ -33,7 +33,7 @@ const docDBClient = new DocumentDBClient(config.host, {
   masterKey: config.authKey
 });
 
-const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId);
+const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId, appInsights.client);
 
 taskDao.init().done(result => {
   const message = `Initialized app for DocumentDB ${config.databaseId} and ${config.collectionId}`;
