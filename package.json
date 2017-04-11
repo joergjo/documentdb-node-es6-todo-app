@@ -1,7 +1,11 @@
 {
   "name": "todo-documentdb-nodejs",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
+  "author": {
+    "name": "Jörg Jooss",
+    "email": "joerg.jooss@microsoft.com"
+  },
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -20,6 +24,11 @@
     "pug": "~2.0.0-beta11",
     "morgan": "~1.8.1",
     "serve-favicon": "~2.4.2",
-    "q": "~1.5.0" 
+    "q": "~1.5.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-zip": "^4.0.0",
+    "minimist": "^1.2.0"
   }
 }

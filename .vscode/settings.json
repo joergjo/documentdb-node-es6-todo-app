@@ -4,5 +4,15 @@
 	"editor.tabSize": 2,
 	"editor.insertSpaces": true,
 	"editor.formatOnType": true,
-  "jshint.enable": false
+  "jshint.enable": false,
+	// Configure glob patterns for excluding files and folders.
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+		"**/_package": true,
+		"**/node_modules": true
+  }
 }
