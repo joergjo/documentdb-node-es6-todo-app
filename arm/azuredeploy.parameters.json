@@ -1,0 +1,24 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"databaseAccountName": {
+			"value": "joergjo-node-demo"
+		},
+		"appSvcPlanName": {
+			"value": "joergjo-node-demo"
+		},
+		"svcPlanSize": {
+			"value": "B1"
+		},
+		"svcPlanSku": {
+			"value": "Basic"
+		},
+		"webAppName": {
+			"value": "joergjo-node-demo"
+		},
+		"instrumentationKey": {
+			"value": ""
+		}
+	}
+}
