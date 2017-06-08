@@ -1,6 +1,6 @@
 {
   "name": "todo-documentdb-nodejs",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "author": {
     "name": "Jörg Jooss",
@@ -10,7 +10,7 @@
     "start": "node ./bin/www"
   },
   "engines": {
-    "node": "~7.7.4"
+    "node": "~8.0.0"
   },
   "dependencies": {
     "applicationinsights": "^0.20.1",
