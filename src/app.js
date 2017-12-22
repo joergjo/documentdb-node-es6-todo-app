@@ -1,6 +1,7 @@
 'use strict';
 
 require('dotenv').config();
+const appInsights = require('applicationinsights');
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -11,7 +12,6 @@ const DocumentDBClient = require('documentdb-q-promises').DocumentClientWrapper;
 const config = require('./config');
 const TaskList = require('./routes/tasklist');
 const TaskDao = require('./models/taskDao');
-const appInsights = require('applicationinsights');
 
 appInsights.setup().start();
 console.log('Application Insights active.');
@@ -33,12 +33,18 @@ const docDBClient = new DocumentDBClient(config.host, {
   masterKey: config.authKey
 });
 
-const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId, appInsights.client);
+const taskDao = new TaskDao(docDBClient, config.databaseId, config.collectionId, appInsights.defaultClient);
 
 taskDao.init().done(result => {
   const message = `Initialized app for DocumentDB ${config.databaseId} and ${config.collectionId}`;
   console.log(message);
-  appInsights.client.trackEvent(message);
+  appInsights.defaultClient.trackEvent({
+    name: "Application initialization",
+    properties: {
+      db: config.databaseId,
+      collection: config.collectionId
+    }
+  });
 }, err => {
   // Failed to initialize TaskDao due to DocumentDB issues (either configuration or runtime).
   // Abort the app.
@@ -77,15 +83,16 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  appInsights.client.trackException(err);
+  appInsights.defaultClient.trackException({ exception: new Error(err.message) });
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
 
-const message = `Server started at ${new Date().toUTCString()}.`;
+const date = new Date().toUTCString();
+const message = `Server started at ${date}.`;
 console.log(message);
-appInsights.client.trackEvent(message);
+appInsights.defaultClient.trackEvent({ name: 'Application start', properties: { date: date } });
 
 module.exports = app;
